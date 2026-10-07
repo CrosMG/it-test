@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест з інформаційних технологій</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --surface:#ffffff;
+    --ink:#14213d;
+    --muted:#5b6b8c;
+    --line:#dfe5f0;
+    --accent:#f2994a;
+    --accent-ink:#7a3d0e;
+    --good:#1f9d70;
+    --bad:#d1495b;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    min-height:100vh;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    line-height:1.5;
+  }
+  h1,h2,h3,.brand,.qnum{ font-family:'Space Grotesk',sans-serif; }
+
+  .wrap{ max-width:720px; margin:0 auto; padding:32px 20px 64px; }
+
+  header.top{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:28px; gap:12px; flex-wrap:wrap;
+  }
+  .brand{ font-size:15px; font-weight:600; color:var(--muted); letter-spacing:.2px; }
+  .progress-track{
+    flex:1; min-width:120px; height:6px; background:var(--line); border-radius:99px; overflow:hidden;
+    margin:0 4px;
+  }
+  .progress-fill{ height:100%; background:var(--accent); border-radius:99px; transition:width .35s ease; }
+  .progress-label{ font-size:13px; color:var(--muted); white-space:nowrap; }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px 28px;
+  }
+
+  /* --- Start screen --- */
+  .kicker{ color:var(--accent-ink); background:#fdeee0; display:inline-block; padding:4px 12px; border-radius:99px; font-size:13px; font-weight:600; margin-bottom:18px; }
+  h1.title{ font-size:32px; line-height:1.15; margin:0 0 12px; letter-spacing:-.01px; }
+  p.lede{ color:var(--muted); font-size:16px; margin:0 0 28px; max-width:52ch; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:13px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:12px 14px; font-size:16px; border:1.5px solid var(--line);
+    border-radius:10px; font-family:inherit; color:var(--ink); background:#fbfcfe;
+  }
+  .field input:focus{ outline:none; border-color:var(--accent); background:#fff; }
+  .topics-list{ display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 28px; }
+  .topic-chip{ font-size:12.5px; color:var(--muted); background:var(--bg); border:1px solid var(--line); padding:5px 11px; border-radius:99px; }
+
+  button.primary{
+    background:var(--ink); color:#fff; border:none; font-family:inherit;
+    font-size:16px; font-weight:600; padding:14px 24px; border-radius:10px;
+    cursor:pointer; width:100%;
+  }
+  button.primary:hover{ background:#0d1730; }
+  button.primary:disabled{ background:#b7bfd1; cursor:not-allowed; }
+  button.ghost{
+    background:none; border:1.5px solid var(--line); color:var(--ink); font-family:inherit;
+    font-size:15px; font-weight:600; padding:12px 20px; border-radius:10px; cursor:pointer;
+  }
+  .error-msg{ color:var(--bad); font-size:13.5px; margin-top:-8px; margin-bottom:16px; min-height:1em; }
+
+  /* --- Quiz screen --- */
+  .qnum{ font-size:13px; color:var(--accent-ink); font-weight:600; margin-bottom:10px; }
+  .qtag{ font-size:11.5px; color:var(--muted); border:1px solid var(--line); border-radius:99px; padding:2px 9px; margin-left:8px; font-family:'Inter',sans-serif; font-weight:500; }
+  h2.qtext{ font-size:21px; line-height:1.35; margin:0 0 6px; }
+  .qhint{ font-size:13.5px; color:var(--muted); margin:0 0 20px; }
+  .options{ display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+  .option{
+    display:flex; align-items:flex-start; gap:12px; padding:13px 16px;
+    border:1.5px solid var(--line); border-radius:10px; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .option:hover{ border-color:#c3cde2; }
+  .option.checked{ border-color:var(--ink); background:#f8f9fc; }
+  .option input{ margin-top:3px; accent-color:var(--ink); width:17px; height:17px; flex-shrink:0; }
+  .option span{ font-size:15.5px; }
+  .nav-row{ display:flex; justify-content:space-between; gap:12px; align-items:center; }
+  .nav-row .spacer{ flex:1; }
+
+  /* --- Results screen --- */
+  .score-hero{ text-align:center; padding:12px 0 24px; }
+  .score-num{ font-size:56px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+  .score-sub{ color:var(--muted); font-size:15px; }
+  table.breakdown{ width:100%; border-collapse:collapse; margin:20px 0 28px; font-size:14.5px; }
+  table.breakdown th, table.breakdown td{ text-align:left; padding:9px 6px; border-bottom:1px solid var(--line); }
+  table.breakdown th{ color:var(--muted); font-weight:600; font-size:12.5px; text-transform:none; }
+  .pill-ok{ color:var(--good); font-weight:600; }
+  .pill-bad{ color:var(--bad); font-weight:600; }
+  .review-item{ border-top:1px solid var(--line); padding:16px 0; }
+  .review-item:first-child{ border-top:none; }
+  .review-q{ font-size:15px; font-weight:600; margin:0 0 8px; }
+  .review-answer{ font-size:14px; margin:2px 0; }
+  .review-answer.correct{ color:var(--good); }
+  .review-answer.incorrect{ color:var(--bad); }
+  .actions-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .copied-note{ font-size:13px; color:var(--good); margin-top:8px; min-height:1em; }
+
+  footer.credit{ text-align:center; color:var(--muted); font-size:12.5px; margin-top:24px; }
+
+  @media (max-width:520px){
+    .card{ padding:24px 18px; }
+    h1.title{ font-size:26px; }
+    .score-num{ font-size:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top" id="topBar" style="display:none;">
+    <span class="brand">Тест · Інформаційні технології</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-label" id="progressLabel">0 / 0</span>
+  </header>
+
+  <div class="card" id="app"></div>
+
+  <footer class="credit">Інформаційні технології · 10 тем</footer>
+</div>
+
+<script>
+/* =========================================================
+   1. НАЛАШТУВАННЯ: сюди легко додавати/редагувати запитання
+   ========================================================= */
+const QUIZ_TITLE = "Тест з інформаційних технологій";
+const QUIZ_SUBTITLE = "Комп'ютерна техніка, інформаційна безпека, MS Word, OCR, хмарні технології, Excel, Google Таблиці та мультимедійні презентації";
+
+// type: "radio" (одна правильна відповідь) або "checkbox" (декілька правильних)
+const QUESTIONS = [
+  // ---------- 1. Інформаційні основи, технічні засоби ----------
+  {
+    topic: "T01",
+    type: "radio",
+    text: "Яка властивість інформації означає, що вона відповідає реальному стану речей?",
+    options: [
+      { text: "Повнота", correct: false },
+      { text: "Актуальність", correct: false },
+      { text: "Достовірність", correct: true },
+      { text: "Доступність", correct: false }
+    ]
+  },
+  {
+    topic: "T01",
+    type: "radio",
+    text: "Хто сформулював фундаментальні принципи роботи комп'ютера?",
+    options: [
+      { text: "Тім Бернерс-Лі", correct: false },
+      { text: "Джон фон Нейман", correct: true },
+      { text: "Чарльз Беббідж", correct: false },
+      { text: "Стів Джобс", correct: false }
+    ]
+  },
+  {
+    topic: "T01",
+    type: "checkbox",
+    text: "Що з переліченого належить до програмного забезпечення (Software)?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Монітор", correct: false },
+      { text: "Операційна система Windows", correct: true },
+      { text: "Текстовий редактор Word", correct: true },
+      { text: "Процесор", correct: false },
+      { text: "Антивірусна програма", correct: true }
+    ]
+  },
+
+  // ---------- 2. Системний блок, пристрої ----------
+  {
+    topic: "T02",
+    type: "radio",
+    text: "Яка складова системного блоку є «мозком» комп'ютера: виконує обчислення й керує роботою інших пристроїв?",
+    options: [
+      { text: "Материнська плата", correct: false },
+      { text: "Відеокарта", correct: false },
+      { text: "Блок живлення", correct: false },
+      { text: "Центральний процесор", correct: true }
+    ]
+  },
+  {
+    topic: "T02",
+    type: "radio",
+    text: "Що правильно про оперативну пам'ять (RAM)?",
+    options: [
+      { text: "Це тимчасова швидка пам'ять; її вміст зникає після вимкнення комп'ютера", correct: true },
+      { text: "Це основне сховище, де дані зберігаються роками", correct: false },
+      { text: "Це пристрій для виведення зображення на екран", correct: false },
+      { text: "Це пристрій для друку документів", correct: false }
+    ]
+  },
+  {
+    topic: "T02",
+    type: "checkbox",
+    text: "Які з перелічених пристроїв належать до пристроїв введення?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Клавіатура", correct: true },
+      { text: "Принтер", correct: false },
+      { text: "Миша", correct: true },
+      { text: "Монітор", correct: false },
+      { text: "Сканер", correct: true }
+    ]
+  },
+  {
+    topic: "T02",
+    type: "radio",
+    text: "Який накопичувач швидший за звичайний жорсткий диск і працює на основі мікросхем пам'яті?",
+    options: [
+      { text: "HDD", correct: false },
+      { text: "Блок живлення", correct: false },
+      { text: "SSD", correct: true },
+      { text: "Акустична система", correct: false }
+    ]
+  },
+
+  // ---------- 3. Загрози безпеці, віруси ----------
+  {
+    topic: "T03",
+    type: "radio",
+    text: "Що таке фішинг?",
+    options: [
+      { text: "Прискорення роботи комп'ютера за допомогою антивіруса", correct: false },
+      { text: "Шахрайські спроби отримати паролі чи дані карток шляхом обману користувача", correct: true },
+      { text: "Резервне копіювання даних", correct: false },
+      { text: "Вид апаратної несправності", correct: false }
+    ]
+  },
+  {
+    topic: "T03",
+    type: "radio",
+    text: "Який вид шкідливого програмного забезпечення маскується під легітимну програму чи файл?",
+    options: [
+      { text: "Троян", correct: true },
+      { text: "Брандмауер", correct: false },
+      { text: "Драйвер", correct: false },
+      { text: "Архіватор", correct: false }
+    ]
+  },
+  {
+    topic: "T03",
+    type: "checkbox",
+    text: "Які дії допомагають боротися з вірусами?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Відкривати вкладення в листах від незнайомців", correct: false },
+      { text: "Регулярно оновлювати антивірусні бази", correct: true },
+      { text: "Вимикати антивірус, щоб комп'ютер працював швидше", correct: false },
+      { text: "Регулярно оновлювати ОС і програми", correct: true },
+      { text: "Створювати резервні копії важливих даних", correct: true }
+    ]
+  },
+
+  // ---------- 4. Текстовий редактор MS Word ----------
+  {
+    topic: "T04",
+    type: "radio",
+    text: "Які відомості відображаються в рядку стану вікна MS Word?",
+    options: [
+      { text: "Назви вкладок стрічки", correct: false },
+      { text: "Кнопки «Згорнути» і «Закрити»", correct: false },
+      { text: "Текст документа", correct: false },
+      { text: "Номер сторінки, кількість слів, мова", correct: true }
+    ]
+  },
+  {
+    topic: "T04",
+    type: "radio",
+    text: "Що відбувається з виділеним фрагментом тексту після команди «Вирізати»?",
+    options: [
+      { text: "Він залишається в документі й копіюється в буфер обміну", correct: false },
+      { text: "Він видаляється з документа й потрапляє в буфер обміну", correct: true },
+      { text: "Він остаточно видаляється без можливості вставити", correct: false },
+      { text: "Він зберігається в окремий файл", correct: false }
+    ]
+  },
+  {
+    topic: "T04",
+    type: "checkbox",
+    text: "Які правила введення тексту в текстовому редакторі правильні?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Для переходу на новий рядок усередині абзацу не натискати Enter — перехід відбувається автоматично", correct: true },
+      { text: "Для абзацного відступу натискати пропуск кілька разів", correct: false },
+      { text: "Між словами робити лише один пропуск", correct: true },
+      { text: "Для великої літери натискати Shift", correct: true },
+      { text: "Постійно тримати ввімкненим Caps Lock", correct: false }
+    ]
+  },
+
+  // ---------- 5. Системи OCR ----------
+  {
+    topic: "T05",
+    type: "radio",
+    text: "Що таке OCR?",
+    options: [
+      { text: "Технологія оптичного розпізнавання символів: перетворює зображення тексту на редагований текст", correct: true },
+      { text: "Формат стиснення відео", correct: false },
+      { text: "Вид комп'ютерного вірусу", correct: false },
+      { text: "Пристрій для друку фотографій", correct: false }
+    ]
+  },
+  {
+    topic: "T05",
+    type: "radio",
+    text: "Який порядок етапів роботи з OCR правильний?",
+    options: [
+      { text: "Розпізнавання → сканування → видалення документа", correct: false },
+      { text: "Збереження тексту → сканування → розпізнавання", correct: false },
+      { text: "Сканування або фото документа → розпізнавання → збереження як тексту → використання даних", correct: true },
+      { text: "Друк → сканування → знищення оригіналу", correct: false }
+    ]
+  },
+  {
+    topic: "T05",
+    type: "checkbox",
+    text: "Які програми належать до систем оптичного розпізнавання тексту?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "ABBYY FineReader", correct: true },
+      { text: "Audacity", correct: false },
+      { text: "Tesseract OCR", correct: true },
+      { text: "Google Chrome", correct: false },
+      { text: "FreeOCR", correct: true }
+    ]
+  },
+
+  // ---------- 6. Документи в хмарі ----------
+  {
+    topic: "T06",
+    type: "radio",
+    text: "Що таке хмарні технології?",
+    options: [
+      { text: "Модель, за якої обробка й зберігання даних та доступ до програм відбуваються через Інтернет на віддалених серверах", correct: true },
+      { text: "Програми для прогнозу погоди", correct: false },
+      { text: "Технологія друку на папері", correct: false },
+      { text: "Вид антивірусного захисту", correct: false }
+    ]
+  },
+  {
+    topic: "T06",
+    type: "radio",
+    text: "У чому перевага спільного редагування документа в хмарі?",
+    options: [
+      { text: "Документ можна відкрити лише на одному комп'ютері", correct: false },
+      { text: "Кожен учасник працює над власною копією, яку потім доводиться об'єднувати вручну", correct: false },
+      { text: "Потрібно щоразу пересилати файл електронною поштою", correct: false },
+      { text: "Кілька користувачів одночасно працюють над одним документом і бачать правки одне одного", correct: true }
+    ]
+  },
+  {
+    topic: "T06",
+    type: "checkbox",
+    text: "Які переваги мають хмарні сервіси для роботи з документами?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Доступ до файлів з будь-якого пристрою", correct: true },
+      { text: "Автоматичне збереження змін", correct: true },
+      { text: "Історія версій і можливість повернутися до попередньої", correct: true },
+      { text: "Робота без інтернет-з'єднання завжди повністю доступна", correct: false },
+      { text: "Документи не потребують жодного захисту", correct: false }
+    ]
+  },
+
+  // ---------- 7. Табличний процесор Excel ----------
+  {
+    topic: "T07",
+    type: "radio",
+    text: "Як називається перетин рядка й стовпця в електронній таблиці?",
+    options: [
+      { text: "Діапазон", correct: false },
+      { text: "Комірка", correct: true },
+      { text: "Робоча книга", correct: false },
+      { text: "Лінійка", correct: false }
+    ]
+  },
+  {
+    topic: "T07",
+    type: "radio",
+    text: "Який запис є абсолютною адресою комірки?",
+    options: [
+      { text: "A1", correct: false },
+      { text: "A$1", correct: false },
+      { text: "$A1", correct: false },
+      { text: "$A$1", correct: true }
+    ]
+  },
+  {
+    topic: "T07",
+    type: "checkbox",
+    text: "Які числові формати доступні в Excel?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Грошовий", correct: true },
+      { text: "Відсотковий", correct: true },
+      { text: "Дата", correct: true },
+      { text: "Звуковий", correct: false },
+      { text: "Графічний", correct: false }
+    ]
+  },
+
+  // ---------- 8. OneDrive, Office 365 ----------
+  {
+    topic: "T08",
+    type: "radio",
+    text: "Що таке OneDrive?",
+    options: [
+      { text: "Хмарне сховище, де можна зберігати файли, надавати до них доступ і синхронізувати з пристроями", correct: true },
+      { text: "Програма для створення презентацій", correct: false },
+      { text: "Антивірус", correct: false },
+      { text: "Пристрій для введення тексту", correct: false }
+    ]
+  },
+  {
+    topic: "T08",
+    type: "radio",
+    text: "Який рівень доступу слід надати колезі, щоб він міг лише переглядати таблицю, не змінюючи даних?",
+    options: [
+      { text: "Редагування", correct: false },
+      { text: "Тільки перегляд", correct: true },
+      { text: "Повний доступ до облікового запису", correct: false },
+      { text: "Адміністратор диска", correct: false }
+    ]
+  },
+  {
+    topic: "T08",
+    type: "checkbox",
+    text: "Що можна робити в Excel Online?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Використовувати формули, діаграми й фільтри", correct: true },
+      { text: "Одночасно редагувати таблицю кількома користувачами", correct: true },
+      { text: "Коментувати клітинки", correct: true },
+      { text: "Працювати без підключення до Інтернету", correct: false },
+      { text: "Працювати лише на одному комп'ютері", correct: false }
+    ]
+  },
+
+  // ---------- 9. Google Таблиці ----------
+  {
+    topic: "T09",
+    type: "radio",
+    text: "Яка функція підсумовує значення за заданим критерієм?",
+    options: [
+      { text: "IF", correct: false },
+      { text: "QUERY", correct: false },
+      { text: "SUMIF", correct: true },
+      { text: "SPARKLINE", correct: false }
+    ]
+  },
+  {
+    topic: "T09",
+    type: "radio",
+    text: "Який тип доступу до таблиці вважають найнебезпечнішим?",
+    options: [
+      { text: "Тільки для себе", correct: false },
+      { text: "Для окремих користувачів за електронною поштою", correct: false },
+      { text: "Для всіх, у кого є посилання", correct: true },
+      { text: "Доступ неможливо налаштувати", correct: false }
+    ]
+  },
+  {
+    topic: "T09",
+    type: "checkbox",
+    text: "Які правила підготовки основної таблиці для створення зведеної таблиці правильні?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Кожен стовпець має заголовок (назву)", correct: true },
+      { text: "Допускається змішувати числа й текст в одному стовпці", correct: false },
+      { text: "В основній таблиці не повинно бути об'єднаних клітинок", correct: true },
+      { text: "Об'єднані клітинки покращують роботу зведеної таблиці", correct: false },
+      { text: "У стовпці не змішують числа з текстом", correct: true }
+    ]
+  },
+
+  // ---------- 10. Мультимедійні презентації ----------
+  {
+    topic: "T10",
+    type: "radio",
+    text: "Яка презентація передбачає діалог користувача з комп'ютером, коли він сам обирає, який матеріал переглядати?",
+    options: [
+      { text: "Інтерактивна", correct: true },
+      { text: "Друкована", correct: false },
+      { text: "Презентація із сценарієм без вибору", correct: false },
+      { text: "Автоматична без навігації", correct: false }
+    ]
+  },
+  {
+    topic: "T10",
+    type: "radio",
+    text: "Яку максимальну кількість кольорів радять використовувати в оформленні презентації?",
+    options: [
+      { text: "Скільки завгодно", correct: false },
+      { text: "1", correct: false },
+      { text: "10", correct: false },
+      { text: "3", correct: true }
+    ]
+  },
+  {
+    topic: "T10",
+    type: "checkbox",
+    text: "Які поради щодо оформлення презентації правильні?",
+    hint: "Виберіть усі правильні варіанти.",
+    options: [
+      { text: "Використовувати не більше двох шрифтів", correct: true },
+      { text: "Читати зі слайдів весь текст дослівно", correct: false },
+      { text: "Числові дані по можливості подавати графіками й діаграмами", correct: true },
+      { text: "Додавати анімацію до кожного елемента, щоб було цікавіше", correct: false },
+      { text: "Не використовувати картинки лише для прикраси", correct: true }
+    ]
+  }
+];
+
+const TOPIC_NAMES = {
+  "T01": "1. Інформаційні основи, технічні засоби",
+  "T02": "2. Системний блок, пристрої",
+  "T03": "3. Загрози безпеці, віруси",
+  "T04": "4. Текстовий редактор MS Word",
+  "T05": "5. Системи OCR",
+  "T06": "6. Документи в хмарі",
+  "T07": "7. Табличний процесор Excel",
+  "T08": "8. OneDrive, Office 365",
+  "T09": "9. Google Таблиці",
+  "T10": "10. Мультимедійні презентації"
+};
+
+/* =========================================================
+   2. ЛОГІКА ТЕСТУ (зазвичай редагувати не потрібно)
+   ========================================================= */
+const app = document.getElementById('app');
+const topBar = document.getElementById('topBar');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+
+let student = { last: "", first: "", middle: "" };
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null).map(() => new Set());
+
+function renderStart(){
+  topBar.style.display = 'none';
+  const topicChips = Object.values(TOPIC_NAMES).map(t => `<span class="topic-chip">${t}</span>`).join('');
+  app.innerHTML = `
+    <span class="kicker">10 тем · ${QUESTIONS.length} запитань · ≈45 хвилин</span>
+    <h1 class="title">${QUIZ_TITLE}</h1>
+    <p class="lede">${QUIZ_SUBTITLE}</p>
+    <div class="topics-list">${topicChips}</div>
+    <div class="field">
+      <label for="lastName">Прізвище</label>
+      <input id="lastName" type="text" autocomplete="off" placeholder="напр. Шевченко">
+    </div>
+    <div class="field">
+      <label for="firstName">Ім'я</label>
+      <input id="firstName" type="text" autocomplete="off" placeholder="напр. Тарас">
+    </div>
+    <div class="field">
+      <label for="middleName">По батькові</label>
+      <input id="middleName" type="text" autocomplete="off" placeholder="напр. Григорович">
+    </div>
+    <div class="error-msg" id="startError"></div>
+    <button class="primary" id="startBtn">Почати тест</button>
+  `;
+  document.getElementById('startBtn').addEventListener('click', () => {
+    const last = document.getElementById('lastName').value.trim();
+    const first = document.getElementById('firstName').value.trim();
+    const middle = document.getElementById('middleName').value.trim();
+    if(!last || !first || !middle){
+      document.getElementById('startError').textContent = "Будь ласка, заповніть прізвище, ім'я та по батькові.";
+      return;
+    }
+    student = { last, first, middle };
+    current = 0;
+    answers = new Array(QUESTIONS.length).fill(null).map(() => new Set());
+    renderQuestion();
+  });
+}
+
+function updateProgress(){
+  topBar.style.display = 'flex';
+  const pct = Math.round((current) / QUESTIONS.length * 100);
+  progressFill.style.width = pct + "%";
+  progressLabel.textContent = `${current + 1} / ${QUESTIONS.length}`;
+}
+
+function renderQuestion(){
+  updateProgress();
+  const q = QUESTIONS[current];
+  const selected = answers[current];
+  const inputType = q.type === 'radio' ? 'radio' : 'checkbox';
+
+  const optionsHtml = q.options.map((opt, i) => {
+    const checked = selected.has(i) ? 'checked' : '';
+    const optClass = selected.has(i) ? 'option checked' : 'option';
+    return `
+      <label class="${optClass}" data-idx="${i}">
+        <input type="${inputType}" name="opt" ${checked} data-idx="${i}">
+        <span>${opt.text}</span>
+      </label>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="qnum">Питання ${current + 1} з ${QUESTIONS.length}<span class="qtag">${TOPIC_NAMES[q.topic] || q.topic}</span></div>
+    <h2 class="qtext">${q.text}</h2>
+    ${q.hint ? `<p class="qhint">${q.hint}</p>` : ''}
+    <div class="options" id="optionsWrap">${optionsHtml}</div>
+    <p class="error-msg" id="requiredError"></p>
+    <div class="nav-row">
+      <button class="ghost" id="backBtn" ${current === 0 ? 'disabled style="visibility:hidden;"' : ''}>Назад</button>
+      <span class="spacer"></span>
+      <button class="primary" id="nextBtn" style="width:auto;">${current === QUESTIONS.length - 1 ? 'Завершити тест' : 'Далі'}</button>
+    </div>
+  `;
+
+  const wrap = document.getElementById('optionsWrap');
+  // Слухаємо "change" на самому input, а не "click" на label:
+  // клік по label форвардиться браузером в input і сплива вгору ще раз,
+  // тож "click" на label спрацював би двічі на один клік користувача.
+  wrap.querySelectorAll('.option input').forEach(input => {
+    input.addEventListener('change', () => {
+      const idx = parseInt(input.getAttribute('data-idx'), 10);
+      if(q.type === 'radio'){
+        selected.clear();
+        selected.add(idx);
+      } else {
+        if(input.checked) selected.add(idx); else selected.delete(idx);
+      }
+      renderQuestion();
+    });
+  });
+
+  if(current > 0){
+    document.getElementById('backBtn').addEventListener('click', () => {
+      current -= 1;
+      renderQuestion();
+    });
+  }
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    // Кожне питання є обов'язковим: не даємо рухатись далі без відповіді.
+    if(selected.size === 0){
+      document.getElementById('requiredError').textContent = "Будь ласка, оберіть відповідь, перш ніж продовжити.";
+      return;
+    }
+    if(current === QUESTIONS.length - 1){
+      renderResults();
+    } else {
+      current += 1;
+      renderQuestion();
+    }
+  });
+}
+
+function isAnswerCorrect(q, selectedSet){
+  const correctIdxs = new Set(q.options.map((o,i)=>o.correct?i:null).filter(v=>v!==null));
+  if(correctIdxs.size !== selectedSet.size) return false;
+  for(const idx of correctIdxs){ if(!selectedSet.has(idx)) return false; }
+  return true;
+}
+
+function renderResults(){
+  topBar.style.display = 'flex';
+  progressFill.style.width = '100%';
+  progressLabel.textContent = `${QUESTIONS.length} / ${QUESTIONS.length}`;
+
+  let scoreCount = 0;
+  const perTopic = {};
+  QUESTIONS.forEach((q, i) => {
+    const ok = isAnswerCorrect(q, answers[i]);
+    if(ok) scoreCount++;
+    if(!perTopic[q.topic]) perTopic[q.topic] = { total: 0, correct: 0 };
+    perTopic[q.topic].total++;
+    if(ok) perTopic[q.topic].correct++;
+  });
+  const pct = Math.round(scoreCount / QUESTIONS.length * 100);
+
+  const breakdownRows = Object.keys(perTopic).sort().map(topic => {
+    const t = perTopic[topic];
+    const cls = t.correct === t.total ? 'pill-ok' : (t.correct === 0 ? 'pill-bad' : '');
+    return `<tr><td>${TOPIC_NAMES[topic] || topic}</td><td class="${cls}">${t.correct} / ${t.total}</td></tr>`;
+  }).join('');
+
+  const reviewHtml = QUESTIONS.map((q, i) => {
+    const ok = isAnswerCorrect(q, answers[i]);
+    const chosenText = q.options.filter((o,idx)=>answers[i].has(idx)).map(o=>o.text).join(', ') || '(не відповіли)';
+    const correctText = q.options.filter(o=>o.correct).map(o=>o.text).join(', ');
+    return `
+      <div class="review-item">
+        <p class="review-q">${i+1}. ${q.text}</p>
+        <p class="review-answer ${ok ? 'correct' : 'incorrect'}">Ваша відповідь: ${chosenText}</p>
+        ${ok ? '' : `<p class="review-answer correct">Правильна відповідь: ${correctText}</p>`}
+      </div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="score-hero">
+      <div class="score-num">${scoreCount} / ${QUESTIONS.length}</div>
+      <div class="score-sub">${student.last} ${student.first} ${student.middle} · ${pct}% правильних відповідей</div>
+    </div>
+    <table class="breakdown">
+      <thead><tr><th>Тема</th><th>Результат</th></tr></thead>
+      <tbody>${breakdownRows}</tbody>
+    </table>
+    <div class="actions-row">
+      <button class="ghost" id="copyBtn">Скопіювати результат</button>
+      <button class="ghost" id="reviewBtn">Показати розбір відповідей</button>
+    </div>
+    <p class="copied-note" id="copiedNote"></p>
+    <div id="reviewWrap"></div>
+  `;
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const lines = [
+      `Тест з інформаційних технологій — результат`,
+      `ПІБ: ${student.last} ${student.first} ${student.middle}`,
+      `Результат: ${scoreCount} / ${QUESTIONS.length} (${pct}%)`,
+      `Дата: ${new Date().toLocaleString('uk-UA')}`,
+      ``,
+      `Розбір за темами:`,
+      ...Object.keys(perTopic).sort().map(t => `  ${TOPIC_NAMES[t] || t}: ${perTopic[t].correct}/${perTopic[t].total}`)
+    ].join('\n');
+    navigator.clipboard.writeText(lines).then(() => {
+      document.getElementById('copiedNote').textContent = "Скопійовано! Встав це в повідомлення викладачу.";
+    }).catch(() => {
+      document.getElementById('copiedNote').textContent = "Не вдалося скопіювати автоматично — виділіть текст вручну.";
+    });
+  });
+
+  document.getElementById('reviewBtn').addEventListener('click', () => {
+    const reviewWrap = document.getElementById('reviewWrap');
+    if(reviewWrap.innerHTML){
+      reviewWrap.innerHTML = '';
+      document.getElementById('reviewBtn').textContent = 'Показати розбір відповідей';
+    } else {
+      reviewWrap.innerHTML = reviewHtml;
+      document.getElementById('reviewBtn').textContent = 'Сховати розбір відповідей';
+    }
+  });
+}
+
+renderStart();
+</script>
+</body>
+</html>
